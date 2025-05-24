@@ -5,20 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Course - LearnSphere AI</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
         <div class="container">
             <a href="index.html" class="logo">LearnSphere AI</a>
-            <nav>
-                <a href="index.html">New Course</a>
-                </nav>
+            <nav id="course-selection-nav-view">
+                <a href="index.html?courseSelection=ml" data-course="ml">Machine Learning</a>
+                <a href="index.html?courseSelection=calculus" data-course="calculus">Calculus</a>
+                <a href="index.html?courseSelection=llm" data-course="llm">LLM</a>
+                <a href="index.html?courseSelection=ai_healthcare" data-course="ai_healthcare">AI in Healthcare</a>
+                <a href="index.html?courseSelection=live" data-course="live" class="live-link">✨ Live Course</a>
+            </nav>
         </div>
     </header>
 
     <main class="container">
         <h1 id="course-main-title" style="text-align: center; color: var(--primary-color); margin-bottom: 30px;">
-            Loading Your Personalized Course...
+            Loading Your Course...
         </h1>
         <div class="error-message" id="error-message-course"></div>
 
@@ -26,28 +31,26 @@
             <aside class="course-sidebar" id="course-sidebar">
                 <h3>Course Outline</h3>
                 <div class="loading-indicator active" id="sidebar-loading">Loading outline...</div>
-                <ul id="lesson-list-ul">
-                    </ul>
+                <ul id="lesson-list-ul"></ul>
             </aside>
 
             <section class="course-content-area">
                 <h2 id="lesson-title-display" class="lesson-title-display">Select a lesson to begin</h2>
                 <div class="loading-indicator" id="lesson-loading"></div>
                 <div class="lesson-content" id="lesson-content-display">
-                    <p>Your lesson content will appear here once generated.</p>
+                    <p>Your lesson content will appear here.</p>
                 </div>
 
                 <div class="interaction-bar">
                     <button class="btn" id="thumbs-up-btn" style="display:none;">👍 I Understood This</button>
-                    <button class="btn btn-secondary" id="expand-topic-btn" style="display:none;">➕ Expand on Selected Text</button>
+                    <button class="btn btn-secondary" id="expand-topic-btn" style="display:none;">➕ Expand Topic</button>
                 </div>
-                <div id="expanded-content-area" style="display:none; margin-top: 20px; padding:15px; background-color: #e9ecef; border-radius: 5px;">
-                    </div>
+                <div id="expanded-content-area" style="display:none; margin-top: 20px; padding:15px; background-color: #e9f2fc; border-radius: 8px; border: 1px solid var(--border-color);">
+                </div>
 
                 <div class="quiz-section" id="quiz-section" style="display:none;">
                     <h3>Check Your Understanding</h3>
-                    <div id="quiz-questions-container">
-                        </div>
+                    <div id="quiz-questions-container"></div>
                     <button class="btn" id="submit-quiz-btn" style="display:none;">Submit Quiz Answers</button>
                 </div>
 
@@ -66,15 +69,16 @@
     </footer>
 
     <script>
-        // --- Global Variables (Retrieved from localStorage) ---
         let GEMINI_API_KEY = '';
+        // These will be populated from COURSE_STRUCTURE for predefined JSON courses
         let USER_LEARNING_GOAL = '';
         let USER_EXPERTISE_LEVEL = '';
         let USER_LEARNING_REASON = '';
-        let COURSE_STRUCTURE = null; // Will hold the parsed course structure
+        let COURSE_STRUCTURE = null;
         let currentLessonIndex = { module: -1, lesson: -1 };
+        let IS_PREDEFINED_COURSE = false;
 
-        // --- DOM Elements ---
+        // ... (DOM Elements remain the same) ...
         const courseMainTitle = document.getElementById('course-main-title');
         const lessonListUl = document.getElementById('lesson-list-ul');
         const lessonTitleDisplay = document.getElementById('lesson-title-display');
@@ -84,55 +88,76 @@
         const errorMessageCourse = document.getElementById('error-message-course');
         const expandTopicBtn = document.getElementById('expand-topic-btn');
         const expandedContentArea = document.getElementById('expanded-content-area');
-
-        // Quiz elements (to be implemented more fully later)
         const quizSection = document.getElementById('quiz-section');
         const quizQuestionsContainer = document.getElementById('quiz-questions-container');
         const submitQuizBtn = document.getElementById('submit-quiz-btn');
-
-        // Interaction buttons to show/hide
         const thumbsUpBtn = document.getElementById('thumbs-up-btn');
         const courseNavButtons = document.querySelector('.course-nav-buttons');
+        const prevLessonBtn = document.getElementById('prev-lesson-btn');
+        const nextLessonBtn = document.getElementById('next-lesson-btn');
 
 
-        // --- Initialization ---
         window.addEventListener('DOMContentLoaded', () => {
-            GEMINI_API_KEY = localStorage.getItem('geminiApiKey');
-            USER_LEARNING_GOAL = localStorage.getItem('userLearningGoal');
-            USER_EXPERTISE_LEVEL = localStorage.getItem('userExpertiseLevel');
-            USER_LEARNING_REASON = localStorage.getItem('userLearningReason');
+            GEMINI_API_KEY = localStorage.getItem('geminiApiKey'); // Still needed for live courses
             const storedStructure = localStorage.getItem('generatedCourseStructure');
+            IS_PREDEFINED_COURSE = localStorage.getItem('isPredefinedCourse') === 'true';
 
-            if (!GEMINI_API_KEY || !storedStructure || !USER_LEARNING_GOAL) {
-                showError("Course data not found or API key missing. Please generate a course first.");
+            if (!storedStructure) { // Primary check for course data
+                showError("Course data not found. Please generate or select a course from the home page.");
                 courseMainTitle.textContent = "Error Loading Course";
                 sidebarLoading.classList.remove('active');
+                if(courseNavButtons) courseNavButtons.style.display = 'none';
                 return;
             }
-
+            
             try {
                 COURSE_STRUCTURE = JSON.parse(storedStructure);
-                if (COURSE_STRUCTURE && COURSE_STRUCTURE.courseTitle) {
-                     courseMainTitle.textContent = COURSE_STRUCTURE.courseTitle;
-                } else {
-                    courseMainTitle.textContent = `Personalized Course on "${USER_LEARNING_GOAL}"`; // Fallback title
+                // Populate user goal, expertise, reason from the COURSE_STRUCTURE itself
+                // These fields should be included in your JSON files and in the API response for live courses
+                USER_LEARNING_GOAL = COURSE_STRUCTURE.learningGoal || localStorage.getItem('userLearningGoal') || "Selected Topic"; // Fallback
+                USER_EXPERTISE_LEVEL = COURSE_STRUCTURE.expertise || localStorage.getItem('userExpertiseLevel') || "beginner"; // Fallback
+                USER_LEARNING_REASON = COURSE_STRUCTURE.reason || localStorage.getItem('userLearningReason') || "Interest"; // Fallback
+
+                courseMainTitle.textContent = COURSE_STRUCTURE.courseTitle || `Course on ${USER_LEARNING_GOAL}`;
+                document.title = `${COURSE_STRUCTURE.courseTitle || USER_LEARNING_GOAL} - LearnSphere AI`;
+                
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentCourseParam = urlParams.get('course');
+                document.querySelectorAll('#course-selection-nav-view a').forEach(link => {
+                    link.classList.remove('active-course-link');
+                    if (link.dataset.course === currentCourseParam) {
+                        link.classList.add('active-course-link');
+                    }
+                });
+                 if (!currentCourseParam && IS_PREDEFINED_COURSE) { // try to highlight based on loaded data if no param
+                    const dataCourseKey = USER_LEARNING_GOAL.toLowerCase().replace(/\s+/g, '_').substring(0,15); // Simple key from goal
+                    const matchedLink = Array.from(document.querySelectorAll('#course-selection-nav-view a')).find(a => a.dataset.course && dataCourseKey.includes(a.dataset.course));
+                    if(matchedLink) matchedLink.classList.add('active-course-link');
+                } else if (!currentCourseParam && !IS_PREDEFINED_COURSE) {
+                     const liveLink = document.querySelector('#course-selection-nav-view a[data-course="live"]');
+                     if(liveLink) liveLink.classList.add('active-course-link');
                 }
+
+
                 populateSidebar();
             } catch (e) {
-                showError("Failed to parse course structure. Please try generating the course again.");
+                showError("Failed to parse course structure. Please try selecting the course again.");
                 console.error("Parsing error:", e);
                 sidebarLoading.classList.remove('active');
+                if(courseNavButtons) courseNavButtons.style.display = 'none';
             }
         });
 
+        // populateSidebar function remains largely the same
         function populateSidebar() {
             if (!COURSE_STRUCTURE || !COURSE_STRUCTURE.modules) {
-                showError("Invalid course structure received.");
+                showError("Invalid course structure provided.");
                 sidebarLoading.classList.remove('active');
+                if(courseNavButtons) courseNavButtons.style.display = 'none';
                 return;
             }
-
-            lessonListUl.innerHTML = ''; // Clear any existing
+            lessonListUl.innerHTML = '';
+            let lessonsAvailable = false;
             COURSE_STRUCTURE.modules.forEach((module, moduleIndex) => {
                 const moduleLi = document.createElement('li');
                 moduleLi.className = 'module-title';
@@ -140,6 +165,7 @@
                 lessonListUl.appendChild(moduleLi);
 
                 if (module.lessons && module.lessons.length > 0) {
+                    lessonsAvailable = true;
                     module.lessons.forEach((lesson, lessonIndexInModule) => {
                         const lessonLi = document.createElement('li');
                         const lessonLink = document.createElement('a');
@@ -151,83 +177,122 @@
                         lessonLi.appendChild(lessonLink);
                         lessonListUl.appendChild(lessonLi);
                     });
+                } else {
+                    const noLessonsLi = document.createElement('li');
+                    noLessonsLi.textContent = "No lessons in this module.";
+                    noLessonsLi.style.paddingLeft = "10px";
+                    noLessonsLi.style.fontStyle = "italic";
+                    lessonListUl.appendChild(noLessonsLi);
                 }
             });
             sidebarLoading.classList.remove('active');
-             // Auto-load the first lesson if available
-            if (COURSE_STRUCTURE.modules.length > 0 && COURSE_STRUCTURE.modules[0].lessons.length > 0) {
+
+            if (lessonsAvailable && COURSE_STRUCTURE.modules.length > 0 && COURSE_STRUCTURE.modules[0].lessons && COURSE_STRUCTURE.modules[0].lessons.length > 0) {
                 const firstLessonLink = lessonListUl.querySelector('a[data-module-index="0"][data-lesson-index="0"]');
                 if (firstLessonLink) {
-                    firstLessonLink.click();
+                    firstLessonLink.click(); // Auto-select first lesson
                 }
             } else {
-                 lessonTitleDisplay.textContent = "No lessons found in this course.";
+                 lessonTitleDisplay.textContent = "No lessons in this course structure.";
+                 lessonContentDisplay.innerHTML = "<p>This course currently has no lessons defined or the structure is empty.</p>";
+                 showInteractionButtons(false);
+                 if(courseNavButtons) courseNavButtons.style.display = 'none';
             }
         }
+
+
+        // handleLessonLinkClick, generateAndDisplayQuiz, displayQuizData, expandTopicBtn,
+        // submitQuizBtn, API call helpers, showError, hideMessages, showInteractionButtons,
+        // updateNavButtons, prevLessonBtn, nextLessonBtn event listeners
+        // remain THE SAME as in the previous response where these functions were updated
+        // to handle IS_PREDEFINED_COURSE correctly using lessonObj.content and lessonObj.quiz.
+        // The key is that COURSE_STRUCTURE (which now comes from JSON for predefined)
+        // will contain these `content` and `quiz` fields directly.
+
+        // --- PASTE THE FULL SCRIPT FROM THE PREVIOUS CORRECT `course_view.html` HERE ---
+        // --- Starting from `async function handleLessonLinkClick(event) { ... }`    ---
+        // --- up to the end of the script tag.                                      ---
+        // --- The functions are already designed to read `lessonObj.content`        ---
+        // --- and `lessonObj.quiz` if `IS_PREDEFINED_COURSE` is true.              ---
 
         async function handleLessonLinkClick(event) {
             event.preventDefault();
             hideMessages();
-            const targetLink = event.target;
-            const moduleIndex = parseInt(targetLink.dataset.moduleIndex);
-            const lessonIndexInModule = parseInt(targetLink.dataset.lessonIndex);
+            const targetLink = event.target.closest('a'); // Ensure we get the 'a' tag
+            if (!targetLink || targetLink.dataset.moduleIndex === undefined) return;
 
-            currentLessonIndex = { module: moduleIndex, lesson: lessonIndexInModule };
+            currentLessonIndex = {
+                module: parseInt(targetLink.dataset.moduleIndex),
+                lesson: parseInt(targetLink.dataset.lessonIndex)
+            };
 
-            // Highlight active lesson
             document.querySelectorAll('#lesson-list-ul a').forEach(link => link.classList.remove('active'));
             targetLink.classList.add('active');
 
-            const lessonObj = COURSE_STRUCTURE.modules[moduleIndex].lessons[lessonIndexInModule];
+            const lessonObj = COURSE_STRUCTURE.modules[currentLessonIndex.module].lessons[currentLessonIndex.lesson];
             lessonTitleDisplay.textContent = lessonObj.title;
-            lessonContentDisplay.innerHTML = ''; // Clear previous content
-            expandedContentArea.style.display = 'none'; // Hide expanded content
-            quizSection.style.display = 'none'; // Hide quiz
+            lessonContentDisplay.innerHTML = '';
+            expandedContentArea.style.display = 'none';
+            expandedContentArea.innerHTML = '';
+            quizSection.style.display = 'none';
             quizQuestionsContainer.innerHTML = '';
 
             lessonLoading.classList.add('active');
             showInteractionButtons(false);
 
-
-            // --- Prompt for Lesson Content ---
-            const lessonPrompt = `You are an AI Tutor. The user is learning about "${USER_LEARNING_GOAL}" (expertise: ${USER_EXPERTISE_LEVEL}, reason: "${USER_LEARNING_REASON}").
-Generate the full lesson content for the lesson titled: "${lessonObj.title}".
-The content should be informative, engaging, well-structured with paragraphs, and suitable for the user's expertise level.
-Use clear headings (e.g., ## Sub-heading) within the lesson content if appropriate.
-Explain concepts clearly. If the user is a beginner, avoid overly complex jargon or explain it well.
-Format the output as plain text with markdown-like headings (##) for structure. Do not wrap in JSON.`;
-
-            try {
-                const lessonContentText = await callGeminiAPIForText(GEMINI_API_KEY, lessonPrompt);
-                // Basic Markdown to HTML conversion (only for ## headings)
-                let htmlContent = lessonContentText
-                    .replace(/^## (.*$)/gim, '<h3>$1</h3>') // H2 in markdown -> H3 in HTML
-                    .replace(/\n/g, '<br>'); // Newlines to <br>
-
-                lessonContentDisplay.innerHTML = htmlContent;
-
-                showInteractionButtons(true);
-
-                // Optionally, generate quiz after lesson content is loaded
-                await generateAndDisplayQuiz(lessonObj.title, lessonContentText);
-
-            } catch (error) {
-                console.error("Error generating lesson content:", error);
-                showError(`Failed to load lesson: ${error.message}`);
-                lessonContentDisplay.innerHTML = `<p>Could not load lesson content. Please try again.</p>`;
-            } finally {
+            if (IS_PREDEFINED_COURSE) {
+                // For predefined courses, content and quiz are directly in lessonObj
+                lessonContentDisplay.innerHTML = lessonObj.content || "<p>No content available for this lesson.</p>";
+                generateAndDisplayQuiz(lessonObj.title, lessonObj.quiz); // Pass the predefined quiz data
                 lessonLoading.classList.remove('active');
+                showInteractionButtons(true);
+                expandTopicBtn.disabled = true;
+                expandTopicBtn.title = "Topic expansion is for live API-generated courses.";
+            } else { // Live generated course
+                expandTopicBtn.disabled = false;
+                expandTopicBtn.title = "Expand on Selected Text";
+                const lessonPrompt = `You are an AI Tutor. The user is learning about "${USER_LEARNING_GOAL}" (expertise: ${USER_EXPERTISE_LEVEL}, reason: "${USER_LEARNING_REASON}").
+    Generate the full lesson content for the lesson titled: "${lessonObj.title}".
+    The content should be informative, engaging, well-structured with paragraphs, and suitable for the user's expertise level.
+    Use clear headings (e.g., ## Sub-heading which will become <h3>) within the lesson content if appropriate.
+    Explain concepts clearly. If the user is a beginner, avoid overly complex jargon or explain it well.
+    Format the output as plain text with markdown-like headings (## for H3) for structure. Do not wrap in JSON.`;
+                try {
+                    const lessonContentText = await callGeminiAPIForText(GEMINI_API_KEY, lessonPrompt);
+                    let htmlContent = lessonContentText
+                        .replace(/^## (.*$)/gim, '<h3>$1</h3>')
+                        .replace(/\n/g, '<br>');
+                    lessonContentDisplay.innerHTML = htmlContent;
+                    // For live courses, generate quiz based on API-fetched content
+                    await generateAndDisplayQuiz(lessonObj.title, lessonContentText);
+                } catch (error) {
+                    console.error("Error generating lesson content:", error);
+                    showError(`Failed to load lesson: ${error.message}`);
+                    lessonContentDisplay.innerHTML = `<p>Could not load lesson content. Please try again.</p>`;
+                } finally {
+                    lessonLoading.classList.remove('active');
+                    showInteractionButtons(true);
+                }
             }
+            updateNavButtons();
         }
 
-        async function generateAndDisplayQuiz(lessonTitle, lessonContextText) {
+        async function generateAndDisplayQuiz(lessonTitle, quizOrContextText) {
             quizSection.style.display = 'none';
             quizQuestionsContainer.innerHTML = '';
             submitQuizBtn.style.display = 'none';
 
+            if (IS_PREDEFINED_COURSE) {
+                // For predefined courses, quizOrContextText is already the quiz array
+                const predefinedQuizData = { questions: quizOrContextText || [] };
+                displayQuizData(predefinedQuizData, lessonTitle);
+                return;
+            }
+
+            // Live course: quizOrContextText is the lesson's text content
             const quizPrompt = `Based on the following lesson content for "${lessonTitle}":
 ---
-${lessonContextText.substring(0, 3000)}
+${String(quizOrContextText).substring(0, 3000)}
 ---
 Generate 2-3 multiple-choice quiz questions to test understanding. Each question should have 3 options (A, B, C).
 Indicate the correct answer (A, B, or C).
@@ -242,67 +307,76 @@ Output this as a valid JSON object with the structure:
     }
   ]
 }
-Ensure the JSON is valid.`;
+Ensure the JSON is valid. If the content is too short or unsuitable, return an empty questions array.`;
 
             try {
-                const quizData = await callGeminiAPI(GEMINI_API_KEY, quizPrompt); // callGeminiAPI parses JSON
-
-                if (quizData && quizData.questions && quizData.questions.length > 0) {
-                    quizSection.style.display = 'block';
-                    quizData.questions.forEach((q, index) => {
-                        const questionDiv = document.createElement('div');
-                        questionDiv.className = 'quiz-question';
-                        questionDiv.innerHTML = `
-                            <p>${index + 1}. ${q.questionText}</p>
-                            ${q.options.map((opt, optIndex) => `
-                                <label>
-                                    <input type="radio" name="q${index}" value="${String.fromCharCode(65 + optIndex)}">
-                                    ${String.fromCharCode(65 + optIndex)}. ${opt}
-                                </label>
-                            `).join('')}
-                            <div class="quiz-feedback" id="q${index}-feedback"></div>
-                        `;
-                        // Store correct answer for later checking
-                        questionDiv.dataset.correct = q.correctOptionLetter;
-                        quizQuestionsContainer.appendChild(questionDiv);
-                    });
-                    if (quizData.questions.length > 0) submitQuizBtn.style.display = 'block';
-                }
+                const quizDataFromAPI = await callGeminiAPI(GEMINI_API_KEY, quizPrompt);
+                displayQuizData(quizDataFromAPI, lessonTitle);
             } catch (error) {
-                console.warn("Could not generate quiz:", error);
-                // Don't show a blocking error for quiz failure, just skip it.
+                console.warn(`Could not generate quiz for "${lessonTitle}":`, error);
+                quizQuestionsContainer.innerHTML = `<p><em>Quiz could not be generated for this topic. Error: ${error.message}</em></p>`;
+                quizSection.style.display = 'block';
             }
         }
 
+        function displayQuizData(quizData, lessonTitleForFallback) {
+            quizQuestionsContainer.innerHTML = '';
+            if (quizData && quizData.questions && quizData.questions.length > 0) {
+                quizSection.style.display = 'block';
+                quizData.questions.forEach((q, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'quiz-question';
+                    questionDiv.innerHTML = `
+                        <p>${index + 1}. ${q.questionText}</p>
+                        ${q.options.map((opt, optIndex) => `
+                            <label>
+                                <input type="radio" name="q${index}" value="${String.fromCharCode(65 + optIndex)}">
+                                ${String.fromCharCode(65 + optIndex)}. ${opt}
+                            </label>
+                        `).join('')}
+                        <div class="quiz-feedback" id="q${index}-feedback"></div>
+                    `;
+                    questionDiv.dataset.correct = q.correctOptionLetter;
+                    quizQuestionsContainer.appendChild(questionDiv);
+                });
+                submitQuizBtn.style.display = 'block';
+            } else {
+                quizQuestionsContainer.innerHTML = `<p><em>No quiz questions available for "${lessonTitleForFallback}".</em></p>`;
+                quizSection.style.display = 'block';
+                submitQuizBtn.style.display = 'none';
+            }
+        }
 
         expandTopicBtn.addEventListener('click', async () => {
+            if (IS_PREDEFINED_COURSE || expandTopicBtn.disabled) {
+                showError("Topic expansion is only available for live, API-generated course content.");
+                return;
+            }
             hideMessages();
             const selectedText = window.getSelection().toString().trim();
             let topicToExpand = selectedText;
 
             if (!topicToExpand) {
-                 // If no text selected, try to use the current lesson title or a prominent part of it
-                const currentLessonTitle = lessonTitleDisplay.textContent;
-                if (!currentLessonTitle || currentLessonTitle === "Select a lesson to begin") {
-                    showError("Please select some text from the lesson to expand upon, or load a lesson first.");
+                const currentLessonTitleText = lessonTitleDisplay.textContent;
+                if (!currentLessonTitleText || currentLessonTitleText === "Select a lesson to begin") {
+                    showError("Please select some text from the lesson to expand, or load a lesson first.");
                     return;
                 }
-                topicToExpand = `the main concepts of the lesson: "${currentLessonTitle}"`;
+                topicToExpand = `the main concepts of the lesson: "${currentLessonTitleText}"`;
             }
 
-
-            expandedContentArea.innerHTML = "<i>Expanding topic... Please wait.</i>";
+            expandedContentArea.innerHTML = "<i>⏳ Expanding topic... Please wait.</i>";
             expandedContentArea.style.display = 'block';
 
             const expandPrompt = `You are an AI Tutor. The user is learning about "${USER_LEARNING_GOAL}" (expertise: ${USER_EXPERTISE_LEVEL}).
 They are currently in a lesson titled "${lessonTitleDisplay.textContent}".
 The user wants to expand on the following specific topic or selected text: "${topicToExpand}".
-Provide a concise but more detailed explanation, or give examples related to this selected topic in the context of the current lesson.
+Provide a concise but more detailed explanation, perhaps with examples, related to this selected topic in the context of the current lesson.
 Format the output as plain text. Do not wrap in JSON.`;
 
             try {
                 const expandedText = await callGeminiAPIForText(GEMINI_API_KEY, expandPrompt);
-                expandedContentArea.innerHTML = `<p><strong>Expanded Explanation:</strong></p><p>${expandedText.replace(/\n/g, '<br>')}</p>`;
+                expandedContentArea.innerHTML = `<p><strong>Expanded Explanation for "${topicToExpand.length > 50 ? topicToExpand.substring(0,50)+ "..." : topicToExpand}":</strong></p><p>${expandedText.replace(/\n/g, '<br>')}</p>`;
             } catch (error) {
                 console.error("Error expanding topic:", error);
                 expandedContentArea.innerHTML = `<p style="color:red;">Could not expand topic: ${error.message}</p>`;
@@ -311,42 +385,45 @@ Format the output as plain text. Do not wrap in JSON.`;
 
         submitQuizBtn.addEventListener('click', () => {
             const questions = quizQuestionsContainer.querySelectorAll('.quiz-question');
+            let allAnswered = true;
             questions.forEach((qDiv, index) => {
                 const selectedOption = qDiv.querySelector(`input[name="q${index}"]:checked`);
                 const feedbackDiv = document.getElementById(`q${index}-feedback`);
+                feedbackDiv.className = 'quiz-feedback'; 
                 if (selectedOption) {
                     if (selectedOption.value === qDiv.dataset.correct) {
-                        feedbackDiv.textContent = "Correct!";
-                        feedbackDiv.className = 'quiz-feedback correct';
+                        feedbackDiv.textContent = "✅ Correct!";
+                        feedbackDiv.classList.add('correct');
                     } else {
-                        feedbackDiv.textContent = `Incorrect. The correct answer was ${qDiv.dataset.correct}.`;
-                        feedbackDiv.className = 'quiz-feedback incorrect';
+                        feedbackDiv.textContent = `❌ Incorrect. The correct answer was ${qDiv.dataset.correct}.`;
+                        feedbackDiv.classList.add('incorrect');
                     }
                 } else {
                     feedbackDiv.textContent = "Please select an answer.";
-                    feedbackDiv.className = 'quiz-feedback';
+                    allAnswered = false;
                 }
             });
+            if (!allAnswered && questions.length > 0) {
+                showError("Please answer all quiz questions before submitting.");
+            } else if (questions.length > 0){ 
+                hideMessages();
+            }
         });
 
-        // --- Helper: Call Gemini API (expects JSON response) ---
-        async function callGeminiAPI(apiKey, promptText) {
-             // Using v1beta - make sure this model is available or switch to a GA version like gemini-1.5-flash-latest
+        async function callGeminiAPI(apiKey, promptText) { // Expects JSON in response.candidates[0].content.parts[0].text
             const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
             const requestBody = {
                 contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: { responseMimeType: "application/json" }
             };
-
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
             });
-
             if (!response.ok) {
-                const errorBody = await response.json();
-                console.error("API Error Response:", errorBody);
+                const errorBody = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                console.error("API Error Response (JSON expected):", errorBody);
                 throw new Error(`API request failed: ${errorBody.error?.message || response.statusText}`);
             }
             const responseData = await response.json();
@@ -354,44 +431,39 @@ Format the output as plain text. Do not wrap in JSON.`;
                 try {
                     return JSON.parse(responseData.candidates[0].content.parts[0].text);
                 } catch (e) {
-                    console.error("Failed to parse JSON from Gemini (expected JSON):", responseData.candidates[0].content.parts[0].text, e);
-                    throw new Error("Gemini response was not valid JSON when JSON was expected.");
+                    console.error("Failed to parse JSON from Gemini (expected JSON in text field):", responseData.candidates[0].content.parts[0].text, e);
+                    throw new Error("Gemini response was not valid JSON where JSON string was expected in text part.");
                 }
             } else {
-                console.error("Invalid API response structure (expected JSON):", responseData);
-                throw new Error('Received an invalid API response structure (expected JSON).');
+                console.error("Invalid API response structure (expected JSON in text part):", responseData);
+                throw new Error('Received an invalid API response structure for JSON content.');
             }
         }
 
-        // --- Helper: Call Gemini API (expects Text response) ---
-        async function callGeminiAPIForText(apiKey, promptText) {
-            // Using v1beta - make sure this model is available or switch to a GA version like gemini-1.5-flash-latest
+        async function callGeminiAPIForText(apiKey, promptText) { // Expects plain text in response
             const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
             const requestBody = {
                 contents: [{ parts: [{ text: promptText }] }]
-                // No specific responseMimeType, default is usually text for simple prompts
+                // No specific responseMimeType, default is usually text
             };
-
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
             });
-
             if (!response.ok) {
-                const errorBody = await response.json();
-                console.error("API Error Response:", errorBody);
+                const errorBody = await response.json().catch(() => ({ error: { message: response.statusText } }));
+                console.error("API Error Response (Text expected):", errorBody);
                 throw new Error(`API request failed: ${errorBody.error?.message || response.statusText}`);
             }
             const responseData = await response.json();
             if (responseData.candidates?.[0]?.content?.parts?.[0]?.text) {
                 return responseData.candidates[0].content.parts[0].text;
             } else {
-                console.error("Invalid API response structure (expected text):", responseData);
-                throw new Error('Received an invalid API response structure (expected text).');
+                console.error("Invalid API response structure (expected text in text part):", responseData);
+                throw new Error('Received an invalid API response structure for plain text content.');
             }
         }
-
 
         function showError(message) {
             errorMessageCourse.textContent = message;
@@ -399,14 +471,58 @@ Format the output as plain text. Do not wrap in JSON.`;
         }
         function hideMessages(){
             errorMessageCourse.classList.remove('active');
-            // lessonLoading.classList.remove('active'); // Control this more granularly
         }
         function showInteractionButtons(show) {
             const displayStyle = show ? 'inline-block' : 'none';
+            const flexDisplayStyle = show ? 'flex' : 'none'; // For flex containers
             thumbsUpBtn.style.display = displayStyle;
             expandTopicBtn.style.display = displayStyle;
-            courseNavButtons.style.display = show ? 'flex' : 'none';
+            if(courseNavButtons) courseNavButtons.style.display = flexDisplayStyle;
         }
+
+        function updateNavButtons() {
+            if (!COURSE_STRUCTURE || currentLessonIndex.module === -1 || !COURSE_STRUCTURE.modules[currentLessonIndex.module] || !COURSE_STRUCTURE.modules[currentLessonIndex.module].lessons) {
+                if(prevLessonBtn) prevLessonBtn.disabled = true;
+                if(nextLessonBtn) nextLessonBtn.disabled = true;
+                return;
+            }
+            const lessonsInCurrentModule = COURSE_STRUCTURE.modules[currentLessonIndex.module].lessons.length;
+            if(prevLessonBtn) prevLessonBtn.disabled = (currentLessonIndex.module === 0 && currentLessonIndex.lesson === 0);
+
+            let isLastLessonInModule = currentLessonIndex.lesson >= lessonsInCurrentModule - 1;
+            let isLastModule = currentLessonIndex.module >= COURSE_STRUCTURE.modules.length - 1;
+            if(nextLessonBtn) nextLessonBtn.disabled = (isLastLessonInModule && isLastModule);
+        }
+
+        if(prevLessonBtn) prevLessonBtn.addEventListener('click', () => {
+            if (prevLessonBtn.disabled) return;
+            let prevModuleIdx = currentLessonIndex.module;
+            let prevLessonIdx = currentLessonIndex.lesson - 1;
+            if (prevLessonIdx < 0) {
+                prevModuleIdx--;
+                if (prevModuleIdx >= 0 && COURSE_STRUCTURE.modules[prevModuleIdx].lessons) {
+                    prevLessonIdx = COURSE_STRUCTURE.modules[prevModuleIdx].lessons.length - 1;
+                } else { return; }
+            }
+            const targetLink = lessonListUl.querySelector(`a[data-module-index="${prevModuleIdx}"][data-lesson-index="${prevLessonIdx}"]`);
+            if (targetLink) targetLink.click();
+        });
+
+        if(nextLessonBtn) nextLessonBtn.addEventListener('click', () => {
+            if (nextLessonBtn.disabled) return;
+            let nextModuleIdx = currentLessonIndex.module;
+            let nextLessonIdx = currentLessonIndex.lesson + 1;
+            if (!COURSE_STRUCTURE.modules[nextModuleIdx] || !COURSE_STRUCTURE.modules[nextModuleIdx].lessons) return;
+            const lessonsInCurrentModule = COURSE_STRUCTURE.modules[nextModuleIdx].lessons.length;
+            if (nextLessonIdx >= lessonsInCurrentModule) {
+                nextModuleIdx++;
+                if (nextModuleIdx < COURSE_STRUCTURE.modules.length && COURSE_STRUCTURE.modules[nextModuleIdx].lessons && COURSE_STRUCTURE.modules[nextModuleIdx].lessons.length > 0) {
+                    nextLessonIdx = 0;
+                } else { return; }
+            }
+            const targetLink = lessonListUl.querySelector(`a[data-module-index="${nextModuleIdx}"][data-lesson-index="${nextLessonIdx}"]`);
+            if (targetLink) targetLink.click();
+        });
 
     </script>
 </body>

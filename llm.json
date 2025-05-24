@@ -1,0 +1,66 @@
+{
+    "courseTitle": "Exploring Large Language Models (LLMs)",
+    "learningGoal": "Understand what LLMs are, how they work at a high level, and their applications",
+    "expertise": "intermediate",
+    "reason": "To keep up with advancements in AI and understand the technology behind tools like ChatGPT.",
+    "modules": [
+      {
+        "title": "Module 1: Introduction to LLMs",
+        "lessons": [
+          {
+            "title": "Lesson 1.1: What Are Large Language Models?",
+            "content": "<h3>Defining LLMs</h3><p>Large Language Models (LLMs) are a type of artificial intelligence model specifically designed to understand, generate, and work with human language. They are 'large' due to two main factors: the vast amount of text data they are trained on (often billions of words) and the enormous number of parameters (weights and biases) they contain, which can also be in the billions or even trillions.</p><p>These models learn the patterns, grammar, context, and even some level of 'knowledge' from the data they are trained on. Examples include OpenAI's GPT series, Google's Gemini, and Meta's Llama.</p><h4>Core Capabilities:</h4><ul><li>Text generation (stories, articles, code)</li><li>Translation between languages</li><li>Summarization of long texts</li><li>Answering questions</li><li>Sentiment analysis</li></ul>",
+            "quiz": [
+              {
+                "questionText": "What makes a language model 'large'?",
+                "options": ["Its physical size on a server.", "The vast amount of training data and number of parameters.", "The length of the sentences it can process."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Which of the following is a core capability of LLMs?",
+                "options": ["Controlling physical robots.", "Generating human-like text.", "Predicting stock market prices with certainty."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 1.2: The Transformer Architecture",
+            "content": "<h3>Under the Hood: Transformers</h3><p>Most modern LLMs are built upon an architecture called the <strong>Transformer</strong>, introduced in the paper 'Attention Is All You Need' by Google researchers in 2017. This architecture was a significant breakthrough in how machines process language.</p><p>Key features of the Transformer include:</p><ul><li><strong>Self-Attention Mechanism:</strong> This allows the model to weigh the importance of different words in an input sequence when processing each word. For example, when processing the word 'it' in a sentence, self-attention helps the model determine which noun 'it' refers to. This is crucial for understanding context and long-range dependencies in text.</li><li><strong>Parallel Processing:</strong> Unlike older models like RNNs that process words sequentially, Transformers can process all words in an input sequence simultaneously, making training much faster on modern hardware (like GPUs).</li><li><strong>Positional Encodings:</strong> Since words are processed in parallel, the model needs a way to understand their order. Positional encodings are added to the input embeddings to give the model information about the position of each word in the sequence.</li></ul>",
+            "quiz": [
+              {
+                "questionText": "What is the name of the groundbreaking neural network architecture that powers most modern LLMs?",
+                "options": ["Recurrent Neural Network (RNN)", "Convolutional Neural Network (CNN)", "Transformer"],
+                "correctOptionLetter": "C"
+              },
+              {
+                "questionText": "What is the role of the 'self-attention' mechanism in Transformers?",
+                "options": ["To make the model pay attention to the user's commands.", "To allow the model to weigh the importance of different words in a sequence for contextual understanding.", "To reduce the number of parameters in the model."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 2: Training and Using LLMs",
+        "lessons": [
+          {
+            "title": "Lesson 2.1: How LLMs are Trained",
+            "content": "<h3>The Training Process</h3><p>Training an LLM is a computationally intensive process that generally involves two main stages:</p><p><strong>1. Pre-training:</strong> In this stage, the model is trained on a massive, diverse dataset of text and code. The typical objective is to predict the next word in a sequence (autoregressive language modeling) or to fill in masked (hidden) words in a sentence. This helps the model learn grammar, facts about the world, reasoning abilities, and different writing styles from the data.</p><p><strong>2. Fine-tuning:</strong> After pre-training, the general-purpose model can be further trained (fine-tuned) on a smaller, more specific dataset to adapt it for particular tasks (e.g., medical text summarization, customer service conversations) or to align its behavior with desired characteristics (e.g., helpfulness, harmlessness) using techniques like Reinforcement Learning from Human Feedback (RLHF).</p>",
+            "quiz": [
+              {
+                "questionText": "What is the main goal of the pre-training stage for an LLM?",
+                "options": ["To make the model answer specific user questions.", "To learn general language patterns, grammar, and knowledge from a massive dataset.", "To translate text into a specific language only."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What is Reinforcement Learning from Human Feedback (RLHF) often used for in LLM development?",
+                "options": ["To initially train the model on web data.", "To align the model's behavior with human preferences for helpfulness and harmlessness.", "To increase the number of parameters in the model."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

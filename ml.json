@@ -1,0 +1,342 @@
+{
+    "courseTitle": "Comprehensive Machine Learning",
+    "learningGoal": "To gain a comprehensive understanding of Machine Learning concepts, algorithms, and applications, from foundational principles to practical implementation.",
+    "expertise": "beginner_to_intermediate",
+    "reason": "For in-depth study, practical application, and to build a strong foundation in the field of Machine Learning.",
+    "modules": [
+      {
+        "title": "Module 1: Foundations of Machine Learning",
+        "lessons": [
+          {
+            "title": "Lesson 1.1: Introduction to Machine Learning & AI",
+            "content": "<h3>What is Machine Learning?</h3><p>Machine Learning (ML) is a branch of Artificial Intelligence (AI) that enables computer systems to learn from data and improve their performance on specific tasks without being explicitly programmed for each case. It's about creating algorithms that can identify patterns, make predictions, and make decisions based on data.</p><p><strong>Example:</strong> An email spam filter is a classic example. Instead of manually writing rules for every possible spam email, the system learns from a large dataset of emails labeled as 'spam' or 'not spam' to automatically classify new emails.</p><h4>AI, ML, and Deep Learning</h4><p>AI is the broad concept of creating machines that can perform tasks that typically require human intelligence. ML is a subset of AI. Deep Learning (DL) is a further subset of ML that uses artificial neural networks with many layers (deep networks) to learn from vast amounts of data.</p>",
+            "quiz": [
+              {
+                "questionText": "What is the primary goal of Machine Learning?",
+                "options": ["To explicitly program computers for every task.", "To enable systems to learn from data and improve performance.", "To build faster computer hardware."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "How are AI, ML, and Deep Learning related?",
+                "options": ["They are all separate, unrelated fields.", "ML is a subset of AI, and DL is a subset of ML.", "AI is a subset of ML, and ML is a subset of DL."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 1.2: Types of Machine Learning Problems",
+            "content": "<h3>Categorizing ML Tasks</h3><p>Machine Learning problems are generally categorized based on the type of data available and the desired outcome:</p><p><strong>1. Supervised Learning:</strong> The system is trained on labeled data (i.e., each data point has a known outcome or 'label'). The goal is to learn a function that maps inputs to outputs.</p><ul><li><em>Classification:</em> Predicts a categorical label (e.g., spam/not spam, cat/dog).</li><li><em>Regression:</em> Predicts a continuous numerical value (e.g., house price, temperature).</li></ul><p><strong>2. Unsupervised Learning:</strong> The system is trained on unlabeled data. The goal is to find hidden patterns or intrinsic structures in the data.</p><ul><li><em>Clustering:</em> Groups similar data points together (e.g., customer segmentation).</li><li><em>Dimensionality Reduction:</em> Reduces the number of variables while preserving important information (e.g., for visualization or efficiency).</li><li><em>Association Rule Mining:</em> Discovers relationships between items in large datasets (e.g., market basket analysis - 'customers who bought X also bought Y').</li></ul><p><strong>3. Reinforcement Learning:</strong> An agent learns to make decisions by performing actions in an environment to achieve a goal. The agent receives rewards or penalties for its actions. (e.g., training a robot to navigate a maze, game playing AI).</p>",
+            "quiz": [
+              {
+                "questionText": "Predicting whether a customer will click on an ad is an example of what type of ML problem?",
+                "options": ["Regression", "Classification", "Clustering"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Which type of learning uses unlabeled data to find patterns?",
+                "options": ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 1.3: The Machine Learning Workflow",
+            "content": "<h3>A Step-by-Step Process</h3><p>A typical machine learning project involves several key steps:</p><ol><li><strong>Problem Definition & Goal Setting:</strong> Clearly understand the problem you are trying to solve and define measurable success metrics.</li><li><strong>Data Collection:</strong> Gather relevant data from various sources. The quality and quantity of data are crucial.</li><li><strong>Data Preprocessing & Cleaning:</strong> This is often the most time-consuming phase. It includes handling missing values, dealing with outliers, encoding categorical variables, feature scaling, and splitting data into training, validation, and test sets.</li><li><strong>Exploratory Data Analysis (EDA):</strong> Understand the data through visualizations and summary statistics to uncover patterns and insights.</li><li><strong>Feature Engineering & Selection:</strong> Create new features from existing ones or select the most relevant features to improve model performance.</li><li><strong>Model Selection:</strong> Choose appropriate ML algorithms based on the problem type and data characteristics.</li><li><strong>Model Training:</strong> Train the selected model(s) using the training dataset.</li><li><strong>Model Evaluation:</strong> Evaluate the model's performance on the validation or test set using appropriate metrics (e.g., accuracy, precision, recall, F1-score, RMSE).</li><li><strong>Hyperparameter Tuning:</strong> Optimize the model's hyperparameters to achieve the best performance.</li><li><strong>Deployment:</strong> Integrate the trained model into a production environment.</li><li><strong>Monitoring & Maintenance:</strong> Continuously monitor the model's performance in production and retrain or update it as needed.</li></ol>",
+            "quiz": [
+              {
+                "questionText": "Which phase of the ML workflow often involves handling missing values and feature scaling?",
+                "options": ["Model Deployment", "Data Preprocessing & Cleaning", "Problem Definition"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What is the purpose of a test set in ML?",
+                "options": ["To train the final model.", "To provide an unbiased evaluation of the final model's performance on unseen data.", "To perform exploratory data analysis."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 2: Data Preprocessing and Feature Engineering",
+        "lessons": [
+          {
+            "title": "Lesson 2.1: Handling Missing Data",
+            "content": "<h3>Dealing with Incomplete Datasets</h3><p>Real-world datasets are often incomplete, meaning some data points may have missing values for one or more features. Handling missing data appropriately is crucial as many ML algorithms cannot work with missing values.</p><h4>Common Strategies:</h4><ul><li><strong>Deletion:</strong> Removing rows (instances) or columns (features) with missing values. This is simple but can lead to significant data loss if many values are missing.</li><li><strong>Imputation:</strong> Filling in missing values with estimated values. Common imputation techniques include:</li><ul><li><em>Mean/Median Imputation:</em> Replacing missing numerical values with the mean or median of the column.</li><li><em>Mode Imputation:</em> Replacing missing categorical values with the mode (most frequent value) of the column.</li><li><em>Regression Imputation:</em> Predicting the missing value using other features as predictors in a regression model.</li><li><em>K-Nearest Neighbors (KNN) Imputation:</em> Using the values from the 'k' closest samples (neighbors) to impute the missing value.</li></ul><li><strong>Using Algorithms that Support Missing Values:</strong> Some algorithms, like certain tree-based models (e.g., XGBoost, LightGBM), can handle missing values intrinsically.</li></ul><p><strong>Example:</strong> If you have a 'Age' column with some missing values, you might replace them with the average age of all individuals in your dataset (mean imputation).</p>",
+            "quiz": [
+              {
+                "questionText": "What is 'imputation' in the context of missing data?",
+                "options": ["Deleting rows with missing values.", "Filling in missing values with estimated values.", "Ignoring missing values during model training."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Replacing missing age values with the average age is an example of:",
+                "options": ["Mode Imputation", "Deletion", "Mean Imputation"],
+                "correctOptionLetter": "C"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 2.2: Feature Scaling and Normalization",
+            "content": "<h3>Bringing Features to a Similar Range</h3><p>Many ML algorithms, especially those that use distance calculations (like K-Nearest Neighbors, Support Vector Machines, Principal Component Analysis) or gradient descent (like linear regression, neural networks), perform better or converge faster when input features are on a similar scale.</p><h4>Common Techniques:</h4><ul><li><strong>Standardization (Z-score normalization):</strong> Rescales features to have a mean of 0 and a standard deviation of 1. The formula is: <code>z = (x - μ) / σ</code>, where μ is the mean and σ is the standard deviation.</li><li><strong>Min-Max Scaling (Normalization):</strong> Rescales features to a fixed range, usually [0, 1] or [-1, 1]. The formula for [0, 1] is: <code>x_scaled = (x - min(x)) / (max(x) - min(x))</code>.</li></ul><p><strong>Example:</strong> If you have a feature 'Income' ranging from $20,000 to $200,000 and another feature 'Age' ranging from 20 to 70, an algorithm might incorrectly give more weight to 'Income' simply because its values are larger. Scaling brings them to a comparable range.</p>",
+            "quiz": [
+              {
+                "questionText": "Why is feature scaling important for some ML algorithms?",
+                "options": ["It increases the number of features.", "It ensures features with larger values don't dominate those with smaller values in distance-based or gradient-based algorithms.", "It always makes the model more interpretable."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Which scaling technique rescales features to have a mean of 0 and a standard deviation of 1?",
+                "options": ["Min-Max Scaling", "Standardization (Z-score normalization)", "Log Transformation"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 2.3: Encoding Categorical Data",
+            "content": "<h3>Converting Categories to Numbers</h3><p>Most ML algorithms require numerical input. Categorical features (features with discrete, non-numeric values like 'color', 'city', or 'gender') need to be converted into a numerical format.</p><h4>Common Encoding Techniques:</h4><ul><li><strong>Label Encoding:</strong> Assigns a unique integer to each category. (e.g., Red=0, Green=1, Blue=2). This can imply an ordinal relationship (Green > Red) which might not be true, so it's often used for ordinal categories or for target variables.</li><li><strong>One-Hot Encoding:</strong> Creates new binary (0 or 1) columns for each category. For a feature with 'k' categories, 'k' (or k-1 to avoid multicollinearity) new columns are created. A '1' indicates the presence of that category for a given sample, and '0' otherwise.</li><li><strong>Dummy Coding:</strong> Similar to One-Hot Encoding, but typically creates k-1 columns, with one category serving as the baseline.</li></ul><p><strong>Example:</strong> For a 'Color' feature with categories ['Red', 'Green', 'Blue'], One-Hot Encoding would create three new columns: 'Color_Red', 'Color_Green', 'Color_Blue'. A 'Red' sample would have [1, 0, 0].</p>",
+            "quiz": [
+              {
+                "questionText": "Which encoding technique creates new binary columns for each category?",
+                "options": ["Label Encoding", "One-Hot Encoding", "Ordinal Encoding (for non-ordinal features)"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What is a potential issue with using Label Encoding for nominal categorical features (no inherent order)?",
+                "options": ["It increases the number of columns too much.", "It can incorrectly imply an ordinal relationship between categories.", "It only works for binary categories."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 2.4: Feature Engineering and Selection",
+            "content": "<h3>Creating and Choosing a Better Set of Features</h3><p><strong>Feature Engineering</strong> is the process of using domain knowledge to create new features from existing raw data to improve model performance. It's often considered an art and a critical differentiator in ML projects.</p><ul><li><em>Examples:</em> Creating interaction terms (e.g., multiplying two features), polynomial features, extracting parts of a date (e.g., day of the week, month), or aggregating data.</li></ul><p><strong>Feature Selection</strong> is the process of selecting a subset of relevant features from the original set of features to use in model construction. Benefits include:</p><ul><li>Reducing model complexity and overfitting.</li><li>Improving model accuracy (by removing irrelevant or noisy features).</li><li>Reducing training time.</li></ul><h4>Common Feature Selection Methods:</h4><ul><li><em>Filter Methods:</em> Evaluate features based on statistical measures (e.g., correlation, chi-squared test) independently of any ML algorithm.</li><li><em>Wrapper Methods:</em> Use a specific ML algorithm to evaluate subsets of features (e.g., Recursive Feature Elimination - RFE).</li><li><em>Embedded Methods:</em> Perform feature selection as part of the model training process (e.g., LASSO regression, tree-based feature importance).</li></ul>",
+            "quiz": [
+              {
+                "questionText": "Creating a new feature 'Age_Squared' from an existing 'Age' feature is an example of:",
+                "options": ["Feature Scaling", "Feature Engineering", "Feature Deletion"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Which type of feature selection method uses an ML algorithm to evaluate feature subsets?",
+                "options": ["Filter Methods", "Wrapper Methods", "Embedded Methods"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 3: Supervised Learning - Regression",
+        "lessons": [
+          {
+            "title": "Lesson 3.1: Linear Regression",
+            "content": "<h3>Predicting Continuous Values with Lines</h3><p>Linear Regression is one of the simplest and most widely used regression algorithms. It models the relationship between a dependent variable (target) and one or more independent variables (features) by fitting a linear equation to the observed data.</p><p><strong>Simple Linear Regression (one feature):</strong> <code>y = β₀ + β₁x + ε</code></p><p><strong>Multiple Linear Regression (multiple features):</strong> <code>y = β₀ + β₁x₁ + β₂x₂ + ... + βₚxₚ + ε</code></p><p>Where 'y' is the target, 'x's are features, 'β's are model coefficients (learned from data), and 'ε' is the error term.</p><p>The model is 'fit' by finding the coefficients (β values) that minimize a cost function, typically the Sum of Squared Errors (SSE) or Mean Squared Error (MSE).</p><p><strong>Example:</strong> Predicting a student's exam score (y) based on the number of hours they studied (x).</p>",
+            "quiz": [
+              {
+                "questionText": "What type of variable does Linear Regression aim to predict?",
+                "options": ["Categorical", "Continuous numerical", "Binary"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "How does Linear Regression typically find the best-fit line?",
+                "options": ["By maximizing the sum of errors.", "By minimizing a cost function like Mean Squared Error.", "By randomly selecting coefficients."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 3.2: Polynomial Regression & Regularization (Ridge, Lasso)",
+            "content": "<h3>Beyond Straight Lines and Preventing Overfitting</h3><p><strong>Polynomial Regression:</strong> Extends linear regression by adding polynomial terms of the features as new features (e.g., x², x³). This allows the model to fit non-linear relationships. While the relationship with the original feature 'x' becomes non-linear, the model is still linear in terms of its coefficients.</p><p><strong>Example:</strong> Modeling the growth of a plant which might accelerate and then slow down, a pattern not captured by a straight line.</p><p><strong>Regularization:</strong> Techniques used to prevent overfitting in models, especially when dealing with many features or complex models like polynomial regression. Overfitting occurs when a model learns the training data too well, including its noise, and performs poorly on unseen data.</p><ul><li><strong>Ridge Regression (L2 Regularization):</strong> Adds a penalty term to the cost function equal to the sum of the squares of the coefficients (multiplied by a regularization parameter λ). It shrinks coefficients towards zero but rarely makes them exactly zero.</li><li><strong>Lasso Regression (L1 Regularization):</strong> Adds a penalty term equal to the sum of the absolute values of the coefficients (multiplied by λ). It can shrink some coefficients to exactly zero, effectively performing feature selection.</li></ul>",
+            "quiz": [
+              {
+                "questionText": "What is the purpose of adding polynomial terms in Polynomial Regression?",
+                "options": ["To simplify the model.", "To allow the model to fit non-linear relationships.", "To always reduce overfitting."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Which regularization technique can perform feature selection by shrinking some coefficients to exactly zero?",
+                "options": ["Ridge Regression", "Lasso Regression", "Principal Component Analysis"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 4: Supervised Learning - Classification",
+        "lessons": [
+          {
+            "title": "Lesson 4.1: Logistic Regression",
+            "content": "<h3>Predicting Probabilities for Categories</h3><p>Despite its name, Logistic Regression is a classification algorithm, not a regression algorithm. It's used to predict the probability that an instance belongs to a particular class (typically binary classification - two classes).</p><p>It models the probability using the logistic function (also called the sigmoid function), which squashes any input value into a range between 0 and 1.</p><p><code>P(Y=1|X) = 1 / (1 + e<sup>-(β₀ + β₁x₁ + ... + βₚxₚ)</sup>)</code></p><p>The output probability can then be converted into a class label by setting a threshold (e.g., if P > 0.5, classify as 1, else 0).</p><p><strong>Example:</strong> Predicting whether a customer will churn (yes/no) based on their usage patterns and demographics.</p>",
+            "quiz": [
+              {
+                "questionText": "What does Logistic Regression predict?",
+                "options": ["A continuous numerical value.", "The probability of an instance belonging to a class.", "The number of clusters in data."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "The output of the logistic (sigmoid) function always lies between:",
+                "options": ["-1 and 1", "0 and 1", "0 and infinity"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 4.2: K-Nearest Neighbors (KNN)",
+            "content": "<h3>Classification by Proximity</h3><p>K-Nearest Neighbors (KNN) is a simple, instance-based learning algorithm used for both classification and regression. It's a non-parametric method, meaning it doesn't make assumptions about the underlying data distribution.</p><p><strong>For Classification:</strong></p><ol><li>When a new data point needs to be classified, KNN calculates the distance (e.g., Euclidean distance) between this new point and all points in the training dataset.</li><li>It identifies the 'K' nearest neighbors (the K training data points closest to the new point).</li><li>The new data point is assigned to the class that is most common among its K nearest neighbors (majority vote).</li></ol><p>The choice of 'K' (number of neighbors) and the distance metric are important hyperparameters.</p><p><strong>Example:</strong> Classifying a new fruit as an apple or an orange based on its similarity (e.g., color, size, shape) to K known apples and oranges.</p><p><strong>Pros:</strong> Simple to understand and implement. No training phase (lazy learner).<br><strong>Cons:</strong> Computationally expensive during prediction for large datasets. Sensitive to irrelevant features and the scale of data (feature scaling is crucial).</p>",
+            "quiz": [
+              {
+                "questionText": "How does KNN classify a new data point?",
+                "options": ["By fitting a linear model.", "By taking a majority vote among its K nearest neighbors.", "By building a decision tree."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Why is feature scaling important for KNN?",
+                "options": ["It makes the algorithm faster to train.", "It prevents features with larger scales from dominating the distance calculation.", "It is not important for KNN."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 4.3: Decision Trees and Random Forests",
+            "content": "<h3>Tree-Based Classification Models</h3><p><strong>Decision Trees:</strong> A non-parametric supervised learning method that creates a model that predicts the value of a target variable by learning simple decision rules inferred from the data features. It splits the data into subsets based on feature values, creating a tree-like structure with decision nodes and leaf nodes (representing class labels or values).</p><p><strong>Example:</strong> A decision tree to decide whether to play tennis based on weather conditions (outlook, temperature, humidity, wind).</p><p><strong>Random Forests:</strong> An ensemble learning method that builds multiple decision trees during training and outputs the class that is the mode of the classes (classification) or mean prediction (regression) of the individual trees. It helps to reduce overfitting compared to a single decision tree and generally has higher accuracy.</p><p>Key ideas in Random Forests:</p><ul><li><strong>Bagging (Bootstrap Aggregating):</strong> Each tree is trained on a random bootstrap sample (random sample with replacement) of the training data.</li><li><strong>Random Feature Subspace:</strong> At each split in a tree, only a random subset of features is considered.</li></ul>",
+            "quiz": [
+              {
+                "questionText": "What does a leaf node in a classification decision tree typically represent?",
+                "options": ["A decision rule based on a feature.", "A class label or a probability distribution over classes.", "The root of the tree."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "How does a Random Forest make a prediction for classification?",
+                "options": ["By using only the deepest tree.", "By taking a majority vote from multiple decision trees.", "By averaging the predictions of all features."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 4.4: Support Vector Machines (SVM)",
+            "content": "<h3>Finding the Optimal Separating Hyperplane</h3><p>Support Vector Machines (SVMs) are powerful and versatile supervised learning models used for classification, regression, and outlier detection. For classification, an SVM finds an optimal hyperplane that best separates the data points of different classes in a high-dimensional space.</p><p>The 'optimal' hyperplane is the one that has the largest margin (distance) between the hyperplane and the nearest data points from any class. These nearest points are called 'support vectors'.</p><h4>Key Concepts:</h4><ul><li><strong>Hyperplane:</strong> A decision boundary. In 2D, it's a line; in 3D, it's a plane; in higher dimensions, it's a hyperplane.</li><li><strong>Margin:</strong> The distance between the hyperplane and the closest data points (support vectors). SVMs try to maximize this margin.</li><li><strong>Kernel Trick:</strong> Allows SVMs to perform non-linear classification by implicitly mapping data to higher-dimensional spaces where a linear separation might be possible. Common kernels include Linear, Polynomial, Radial Basis Function (RBF), and Sigmoid.</li></ul><p><strong>Example:</strong> Classifying images of handwritten digits based on their pixel values.</p>",
+            "quiz": [
+              {
+                "questionText": "What does an SVM try to maximize when finding the optimal hyperplane?",
+                "options": ["The number of support vectors.", "The margin between the hyperplane and the closest data points.", "The complexity of the hyperplane."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What is the purpose of the 'kernel trick' in SVMs?",
+                "options": ["To reduce the number of features.", "To enable non-linear classification by mapping data to higher dimensions.", "To speed up the training process."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 5: Unsupervised Learning",
+        "lessons": [
+          {
+            "title": "Lesson 5.1: K-Means Clustering",
+            "content": "<h3>Grouping Similar Data Points</h3><p>K-Means Clustering is an iterative unsupervised learning algorithm that aims to partition a dataset into 'K' distinct, non-overlapping clusters. Each data point belongs to the cluster with the nearest mean (cluster centroid).</p><h4>Algorithm Steps:</h4><ol><li><strong>Initialize Centroids:</strong> Randomly select 'K' data points as initial cluster centroids.</li><li><strong>Assignment Step:</strong> Assign each data point to the cluster whose centroid is closest (e.g., using Euclidean distance).</li><li><strong>Update Step:</strong> Recalculate the centroids of the newly formed clusters as the mean of all data points assigned to that cluster.</li><li><strong>Repeat:</strong> Repeat steps 2 and 3 until the centroids no longer change significantly or a maximum number of iterations is reached.</li></ol><p>The choice of 'K' (number of clusters) is crucial and often determined using methods like the Elbow method or Silhouette analysis.</p><p><strong>Example:</strong> Segmenting customers into different groups based on their purchasing behavior to target marketing campaigns.</p>",
+            "quiz": [
+              {
+                "questionText": "What is the main objective of K-Means Clustering?",
+                "options": ["To predict a continuous value.", "To partition data into K distinct clusters based on similarity.", "To classify data into predefined categories."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "In K-Means, how is a data point assigned to a cluster in the assignment step?",
+                "options": ["Randomly.", "Based on its distance to the cluster centroids.", "Based on a predefined label."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 5.2: Hierarchical Clustering",
+            "content": "<h3>Building a Tree of Clusters</h3><p>Hierarchical Clustering is another unsupervised learning algorithm that creates a hierarchy of clusters. It doesn't require specifying the number of clusters beforehand.</p><h4>Two Main Types:</h4><ul><li><strong>Agglomerative (Bottom-up):</strong> Starts with each data point as its own cluster and iteratively merges the closest pair of clusters until only one cluster (or a desired number of clusters) remains.</li><li><strong>Divisive (Top-down):</strong> Starts with all data points in a single cluster and recursively splits clusters until each data point is its own cluster (or a desired number of clusters is reached). Agglomerative is more common.</li></ul><p>The results are often visualized as a dendrogram, a tree-like diagram that shows the sequence of merges or splits.</p><p><strong>Example:</strong> Analyzing genetic data to find hierarchies of relatedness among different species or individuals.</p>",
+            "quiz": [
+              {
+                "questionText": "Which type of hierarchical clustering starts with each data point as its own cluster and merges them?",
+                "options": ["Divisive", "Agglomerative", "K-Means"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What is a dendrogram used for in hierarchical clustering?",
+                "options": ["To select the initial centroids.", "To visualize the hierarchy of clusters and the sequence of merges/splits.", "To calculate the distance between data points."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 5.3: Principal Component Analysis (PCA)",
+            "content": "<h3>Reducing Dimensions, Retaining Variance</h3><p>Principal Component Analysis (PCA) is a widely used unsupervised learning technique for dimensionality reduction. It transforms a dataset with many features into a smaller set of new features called 'principal components' while retaining most of the original information (variance).</p><p>The principal components are orthogonal (uncorrelated) and are ordered such that the first principal component captures the largest possible variance in the data, the second captures the second largest, and so on.</p><h4>Benefits of PCA:</h4><ul><li>Reduces dimensionality, which can help with visualization, reduce computational cost, and mitigate the curse of dimensionality.</li><li>Can remove noise by discarding components with low variance.</li></ul><p><strong>Example:</strong> Reducing a dataset of images (where each pixel is a feature) to a lower-dimensional representation for faster processing or visualization, while keeping the main visual characteristics.</p>",
+            "quiz": [
+              {
+                "questionText": "What is the primary goal of Principal Component Analysis (PCA)?",
+                "options": ["To group data into clusters.", "To reduce the dimensionality of a dataset while retaining most of its variance.", "To predict a target variable."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "How are principal components ordered in PCA?",
+                "options": ["Randomly.", "By the amount of variance they capture in the data, from highest to lowest.", "Alphabetically by name."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 6: Model Evaluation and Validation",
+        "lessons": [
+          {
+            "title": "Lesson 6.1: Metrics for Regression Models",
+            "content": "<h3>Quantifying Prediction Accuracy for Continuous Values</h3><p>Evaluating the performance of regression models is crucial to understand how well they predict continuous target variables.</p><h4>Common Regression Metrics:</h4><ul><li><strong>Mean Absolute Error (MAE):</strong> The average of the absolute differences between predicted and actual values. It's easy to interpret as it's in the same units as the target variable. <code>MAE = (1/n) * Σ|yᵢ - ŷᵢ|</code></li><li><strong>Mean Squared Error (MSE):</strong> The average of the squared differences between predicted and actual values. It penalizes larger errors more heavily. <code>MSE = (1/n) * Σ(yᵢ - ŷᵢ)²</code></li><li><strong>Root Mean Squared Error (RMSE):</strong> The square root of MSE. It's also in the same units as the target variable and is a popular metric. <code>RMSE = √MSE</code></li><li><strong>R-squared (R² or Coefficient of Determination):</strong> Represents the proportion of the variance in the dependent variable that is predictable from the independent variables. Ranges from 0 to 1 (or sometimes negative for poor models). A higher R² generally indicates a better fit.</li></ul><p><strong>Example:</strong> If predicting house prices, an RMSE of $20,000 means the model's predictions are, on average, off by about $20,000.</p>",
+            "quiz": [
+              {
+                "questionText": "Which regression metric penalizes larger errors more heavily due to squaring the differences?",
+                "options": ["Mean Absolute Error (MAE)", "Mean SquaredError (MSE)", "R-squared (R²)"],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What does an R-squared value of 0.8 indicate?",
+                "options": ["The model explains 80% of the variance in the target variable.", "The model's predictions are 80% accurate in terms of classification.", "The model has an average error of 0.8 units."],
+                "correctOptionLetter": "A"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 6.2: Metrics for Classification Models",
+            "content": "<h3>Assessing Performance for Categorical Predictions</h3><p>For classification models, different metrics are used to evaluate how well they assign instances to predefined categories.</p><h4>Common Classification Metrics (often derived from a Confusion Matrix):</h4><ul><li><strong>Accuracy:</strong> The proportion of correctly classified instances out of the total instances. <code>Accuracy = (TP + TN) / (TP + TN + FP + FN)</code>. Can be misleading for imbalanced datasets.</li><li><strong>Precision:</strong> Of all instances predicted as positive, what proportion were actually positive? <code>Precision = TP / (TP + FP)</code>. Important when false positives are costly.</li><li><strong>Recall (Sensitivity or True Positive Rate):</strong> Of all actual positive instances, what proportion were correctly predicted as positive? <code>Recall = TP / (TP + FN)</code>. Important when false negatives are costly.</li><li><strong>F1-Score:</strong> The harmonic mean of Precision and Recall, providing a balance between them. <code>F1 = 2 * (Precision * Recall) / (Precision + Recall)</code>.</li><li><strong>Confusion Matrix:</strong> A table showing True Positives (TP), True Negatives (TN), False Positives (FP), and False Negatives (FN).</li><li><strong>ROC Curve (Receiver Operating Characteristic) and AUC (Area Under the ROC Curve):</strong> ROC curve plots the True Positive Rate against the False Positive Rate at various threshold settings. AUC represents the degree of separability between classes; a higher AUC (closer to 1) is better.</li></ul><p><strong>Example:</strong> In a medical diagnosis model for a rare disease, high recall is crucial to avoid missing actual cases (false negatives), even if it means some healthy patients are flagged (false positives).</p>",
+            "quiz": [
+              {
+                "questionText": "In a binary classification problem, what does 'Recall' measure?",
+                "options": ["The proportion of correctly classified instances overall.", "The proportion of actual positive instances that were correctly identified by the model.", "The proportion of instances predicted as positive that were actually positive."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Why can accuracy be a misleading metric for imbalanced datasets?",
+                "options": ["It always underestimates model performance.", "A model can achieve high accuracy by simply predicting the majority class, even if it performs poorly on the minority class.", "It only works for binary classification."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 6.3: Cross-Validation and Overfitting/Underfitting",
+            "content": "<h3>Ensuring Model Generalization</h3><p><strong>Overfitting:</strong> Occurs when a model learns the training data too well, including its noise and specific patterns, and as a result, performs poorly on new, unseen data. The model has high variance.</p><p><strong>Underfitting:</strong> Occurs when a model is too simple to capture the underlying patterns in the training data and, as a result, performs poorly on both training and unseen data. The model has high bias.</p><p><strong>Cross-Validation (CV):</strong> A technique to evaluate how well a model will generalize to an independent dataset. It helps in assessing overfitting and selecting the best model/hyperparameters.</p><ul><li><strong>K-Fold Cross-Validation:</strong> The training data is divided into 'K' equal-sized folds. The model is trained K times, each time using K-1 folds for training and the remaining fold for validation. The average performance across the K folds is reported.</li></ul><p><strong>Example:</strong> Using 5-fold cross-validation, if your model performs very well on training data but poorly during each validation fold, it's likely overfitting.</p>",
+            "quiz": [
+              {
+                "questionText": "What is 'overfitting' in machine learning?",
+                "options": ["When a model is too simple to capture data patterns.", "When a model learns the training data too well, including noise, and performs poorly on new data.", "When a model performs equally well on training and test data."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "What is the main purpose of K-Fold Cross-Validation?",
+                "options": ["To speed up model training.", "To provide a more robust estimate of how well a model will generalize to unseen data and help detect overfitting.", "To increase the size of the training dataset."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

@@ -1,0 +1,66 @@
+{
+    "courseTitle": "Introduction to Calculus",
+    "learningGoal": "Grasp the fundamental concepts of limits, derivatives, and basic integration",
+    "expertise": "beginner",
+    "reason": "To build a foundation for further studies in mathematics, science, or engineering.",
+    "modules": [
+      {
+        "title": "Module 1: Limits and Continuity",
+        "lessons": [
+          {
+            "title": "Lesson 1.1: Understanding Limits",
+            "content": "<h3>The Idea of a Limit</h3><p>In calculus, a limit is the value that a function approaches as the input (or independent variable) approaches some value. Limits are fundamental to understanding calculus, forming the basis for derivatives and integrals.</p><p>Imagine you're walking towards a wall. Each step you take gets you closer. The 'limit' is the wall itself, even if you never technically reach it in a finite number of steps. Mathematically, we write this as lim (x→c) f(x) = L, which means as x gets arbitrarily close to c, f(x) gets arbitrarily close to L.</p><h4>Why are limits important?</h4><ul><li>They help us analyze the behavior of functions near points where they might not be defined.</li><li>They are the foundation for defining the derivative (instantaneous rate of change).</li></ul>",
+            "quiz": [
+              {
+                "questionText": "What does a limit describe in calculus?",
+                "options": ["The exact value of a function at any point.", "The value a function approaches as its input approaches a certain value.", "The maximum possible output of a function."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Limits are crucial for defining which major calculus concept?",
+                "options": ["Algebraic expressions", "Derivatives", "Geometric proofs"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          },
+          {
+            "title": "Lesson 1.2: Continuity",
+            "content": "<h3>What Makes a Function Continuous?</h3><p>A function is continuous at a point if there are no interruptions, breaks, or holes in its graph at that point. Informally, you can draw the graph of a continuous function without lifting your pen from the paper.</p><p>For a function f(x) to be continuous at a point x = c, three conditions must be met:</p><ol><li><strong>f(c) is defined:</strong> The function must have a value at c.</li><li><strong>The limit of f(x) as x approaches c exists:</strong> lim (x→c) f(x) must exist.</li><li><strong>The limit equals the function value:</strong> lim (x→c) f(x) = f(c).</li></ol><p>If any of these conditions fail, the function is said to be discontinuous at x = c.</p>",
+            "quiz": [
+              {
+                "questionText": "Which of these is a condition for a function to be continuous at a point c?",
+                "options": ["The function must be a straight line.", "The limit of the function as x approaches c must equal f(c).", "The function must have a derivative at c."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "Informally, what does it mean for a function to be continuous?",
+                "options": ["Its graph is made of separate dots.", "You can draw its graph without lifting your pen.", "It always increases or always decreases."],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Module 2: Derivatives",
+        "lessons": [
+          {
+            "title": "Lesson 2.1: The Definition of the Derivative",
+            "content": "<h3>Instantaneous Rate of Change</h3><p>The derivative of a function measures how a function's output value changes with respect to a change in its input value. Geometrically, the derivative of a function at a particular point is the slope of the tangent line to the graph of the function at that point.</p><p>The derivative essentially gives us the instantaneous rate of change. For example, if a function represents the position of an object over time, its derivative represents the object's instantaneous velocity.</p><h4>The Limit Definition:</h4><p>The derivative of a function f(x) with respect to x is denoted as f'(x) or dy/dx and is formally defined using limits:</p><p>f'(x) = lim (h→0) [f(x+h) - f(x)] / h</p><p>This formula calculates the slope of the secant line between (x, f(x)) and (x+h, f(x+h)) and then takes the limit as h approaches zero, which gives the slope of the tangent line.</p>",
+            "quiz": [
+              {
+                "questionText": "What does the derivative of a function represent geometrically at a point?",
+                "options": ["The area under the curve up to that point.", "The slope of the tangent line at that point.", "The y-intercept of the function."],
+                "correctOptionLetter": "B"
+              },
+              {
+                "questionText": "If a function describes an object's position over time, what does its derivative describe?",
+                "options": ["Its acceleration", "Its instantaneous velocity", "The total distance traveled"],
+                "correctOptionLetter": "B"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

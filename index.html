@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnSphere AI - Personalized Learning</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="index.html" class="logo">LearnSphere AI</a>
+            <nav>
+                <a href="#about">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content container">
+        <h1>Unlock Your Potential.</h1>
+        <p class="sub-headline">Tell us what you want to learn, and we'll craft a unique course just for you, powered by AI.</p>
+
+        <div id="apiKeySection">
+            <label for="apiKeyInput">Enter Your Google Gemini API Key (KEEP THIS SECRET - for demo only):</label>
+            <input type="password" id="apiKeyInput" class="form-group" placeholder="Your Gemini API Key">
+            <p style="font-size: 0.8em; color: #721c24;">Warning: API keys entered here are used directly in the browser. Not for production use.</p>
+        </div>
+
+        <div class="error-message" id="error-message-home"></div>
+        <div class="loading-indicator" id="loading-home">Generating Course Outline... Please Wait.</div>
+
+        <form class="input-form" id="courseGenerationForm">
+            <div class="form-group">
+                <label for="learning-goal">What do you want to learn?</label>
+                <textarea id="learning-goal" name="learning-goal" placeholder="e.g., Master Python for data analysis" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="expertise-level">What's your current level of expertise?</label>
+                <select id="expertise-level" name="expertise-level" required>
+                    <option value="" disabled selected>Select your level</option>
+                    <option value="absolute_beginner">Absolute Beginner (No prior knowledge)</option>
+                    <option value="beginner">Beginner (Some basic concepts understood)</option>
+                    <option value="intermediate">Intermediate (Familiar with the fundamentals)</option>
+                    <option value="advanced">Advanced (Looking to deepen specific knowledge)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="learning-reason">Why are you learning this?</label>
+                <textarea id="learning-reason" name="learning-reason" placeholder="e.g., For a new career path, personal interest" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-full-width">✨ Generate My Course</button>
+        </form>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 LearnSphere AI. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        const courseGenerationForm = document.getElementById('courseGenerationForm');
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const loadingIndicatorHome = document.getElementById('loading-home');
+        const errorMessageHome = document.getElementById('error-message-home');
+
+        courseGenerationForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            hideMessages();
+
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                showError("Please enter your Gemini API Key.");
+                return;
+            }
+
+            const learningGoal = document.getElementById('learning-goal').value;
+            const expertiseLevel = document.getElementById('expertise-level').value;
+            const learningReason = document.getElementById('learning-reason').value;
+
+            if (!learningGoal || !expertiseLevel || !learningReason) {
+                showError("Please fill out all fields.");
+                return;
+            }
+
+            loadingIndicatorHome.classList.add('active');
+
+            // --- Corrected Prompt for Course Outline Generation ---
+            const coursePrompt = `You are an AI curriculum designer. A user wants to learn about "${learningGoal}" with a current expertise level of "${expertiseLevel}" because "${learningReason}".
+
+Generate a course outline. The module and lesson titles should clearly relate to the main learning goal: "${learningGoal}".
+For example, if the goal is "Python for Data Analysis", module titles could be "Introduction to Python for Data Analysis" or "Core Python Concepts", and lesson titles "What is Python?", "Setting up Your Environment", etc. Adapt this based on the user's specific goal.
+
+Output this as a valid JSON object with the following structure:
+{
+  "courseTitle": "Personalized Course on ${learningGoal}",
+  "modules": [
+    {
+      "title": "Module 1: [Descriptive Title, e.g., Introduction to X]",
+      "lessons": [
+        {"title": "Lesson 1.1: [Specific Lesson Title, e.g., What is X?]"},
+        {"title": "Lesson 1.2: [Specific Lesson Title, e.g., Key Concepts of X]"}
+      ]
+    },
+    {
+      "title": "Module 2: [Descriptive Title, e.g., Core Principles of X]",
+      "lessons": [
+        {"title": "Lesson 2.1: [Specific Lesson Title]"},
+        {"title": "Lesson 2.2: [Specific Lesson Title]"}
+      ]
+    }
+    // Add more modules and lessons as appropriate for "${learningGoal}" and expertise level "${expertiseLevel}".
+    // Ensure the titles are concise and indicative of their content.
+    // Generate at least 2-3 modules and 2-3 lessons per module.
+  ]
+}
+Ensure the generated JSON is valid. Replace placeholders like "[Descriptive Title, e.g., Introduction to X]" with actual, relevant titles based on the learning goal "${learningGoal}".`;
+
+            try {
+                const response = await callGeminiAPI(apiKey, coursePrompt);
+                // Store API key and response for the next page
+                localStorage.setItem('geminiApiKey', apiKey);
+                localStorage.setItem('userLearningGoal', learningGoal);
+                localStorage.setItem('userExpertiseLevel', expertiseLevel);
+                localStorage.setItem('userLearningReason', learningReason);
+                localStorage.setItem('generatedCourseStructure', JSON.stringify(response));
+
+                // Redirect to course view page
+                window.location.href = `course_view.html`;
+
+            } catch (error) {
+                console.error("Error generating course:", error);
+                showError(`Failed to generate course outline. Error: ${error.message}. Check console for details.`);
+            } finally {
+                loadingIndicatorHome.classList.remove('active');
+            }
+        });
+
+        async function callGeminiAPI(apiKey, promptText) {
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+            const requestBody = {
+                contents: [{
+                    parts: [{ text: promptText }]
+                }],
+                 generationConfig: {
+                    responseMimeType: "application/json",
+                }
+            };
+
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.json();
+                console.error("API Error Response:", errorBody);
+                throw new Error(`API request failed with status ${response.status}: ${errorBody.error?.message || 'Unknown error'}`);
+            }
+
+            const responseData = await response.json();
+
+            if (responseData.candidates && responseData.candidates.length > 0 &&
+                responseData.candidates[0].content && responseData.candidates[0].content.parts &&
+                responseData.candidates[0].content.parts.length > 0) {
+                const rawJson = responseData.candidates[0].content.parts[0].text;
+                try {
+                    return JSON.parse(rawJson);
+                } catch (e) {
+                    console.error("Failed to parse JSON from Gemini response:", rawJson, e);
+                    throw new Error("Gemini response was not valid JSON. Check the prompt's JSON output instructions, or the API's actual output in the network tab / console.");
+                }
+            } else {
+                console.error("Invalid API response structure:", responseData);
+                throw new Error('Received an invalid response structure from the API.');
+            }
+        }
+
+        function showError(message) {
+            errorMessageHome.textContent = message;
+            errorMessageHome.classList.add('active');
+        }
+        function hideMessages(){
+            errorMessageHome.classList.remove('active');
+            loadingIndicatorHome.classList.remove('active');
+        }
+
+    </script>
+</body>
+</html>
